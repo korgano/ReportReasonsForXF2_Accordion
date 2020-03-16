@@ -1,0 +1,25 @@
+<xf:if is="$reportReason.isInsert()">
+	<xf:title>{{ phrase('tckReportReasons_add_report_reason') }}</xf:title>
+<xf:else />
+	<xf:title>{{ phrase('tckReportReasons_edit_report_reason:') }} {$reportReason.MasterReason.phrase_text}</xf:title>
+</xf:if>
+
+<xf:pageaction if="$reportReason.isUpdate()">
+	<xf:button href="{{ link('report-reasons/delete', $reportReason) }}" icon="delete" overlay="true" />
+</xf:pageaction>
+
+<xf:form action="{{ link('report-reasons/save', $reportReason) }}" ajax="true" class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:textboxrow name="reason" value="{{ $reportReason.exists() ? $reportReason.MasterReason.phrase_text : '' }}"
+						   label="{{ phrase('tckReportReasons_reason') }}" />
+			
+			<xf:textarearow name="explain" value="{{ $reportReason.exists() ? $reportReason.MasterExplain.phrase_text : '' }}"
+							autosize="true"
+							label="{{ phrase('tckReportReasons_explanation') }}" />
+		</div>
+
+		<xf:submitrow sticky="true" icon="save" />
+	</div>
+
+</xf:form>

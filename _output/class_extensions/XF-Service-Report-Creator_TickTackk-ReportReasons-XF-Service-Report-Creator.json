@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Service\\Report\\Creator",
+    "to_class": "TickTackk\\ReportReasons\\XF\\Service\\Report\\Creator",
+    "execute_order": 10,
+    "active": true
+}

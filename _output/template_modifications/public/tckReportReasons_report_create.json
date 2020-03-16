@@ -1,0 +1,9 @@
+{
+    "template": "report_create",
+    "description": "Show report reasons",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "#(<xf:textarearow name=\"message\".*?label=\")(.*?)(\".*?\\/>)#si",
+    "replace": "<xf:if is=\"$reportReasons is not empty\">\n\t<xf:radiorow name=\"reason_id\" label=\"$2\">\n\t\t<xf:foreach loop=\"$reportReasons\" value=\"$reportReason\">\n\t\t\t<xf:option value=\"{$reportReason.reason_id}\"\n\t\t\t\t\t   label=\"{$reportReason.reason}\"\n\t\t\t\t\t   hint=\"{$reportReason.explain}\"\n\t\t\t\t\t   data-hide=\"true\" />\n\t\t</xf:foreach>\n\t\t<xf:option value=\"0\" label=\"{{ phrase('tckReportReasons_custom...') }}\" data-hide=\"true\">\n\t\t\t<xf:textarea name=\"message\" autosize=\"true\" />\n\t\t</xf:option>\n\t</xf:radiorow>\n<xf:else />\n\t$0\n</xf:if>"
+}
