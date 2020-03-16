@@ -1,0 +1,25 @@
+{
+    "legacy_addon_id": "",
+    "title": "Report Reasons",
+    "description": "This add-on allows creating predefined report reasons.",
+    "version_id": 1000011,
+    "version_string": "1.0.0 Alpha 1",
+    "dev": "TickTackk",
+    "dev_url": "https://xenforo.com/community/members/ticktackk.90375/",
+    "faq_url": "",
+    "support_url": "https://github.com/ticktackk/ReportReasonsForXF2/issues",
+    "extra_urls": {
+        "Twitter": "https://twitter.com/t1cktackk"
+    },
+    "require": {
+        "XF": [
+            2010770,
+            "XenForo 2.1.7+"
+        ],
+        "php": [
+            "7.3.0",
+            "PHP 7.3.0+"
+        ]
+    },
+    "icon": "fa-list-alt"
+}
