@@ -1,0 +1,11 @@
+{
+    "route_type": "admin",
+    "route_prefix": "report-reasons",
+    "sub_name": "",
+    "format": ":int<reason_id>/",
+    "build_class": "",
+    "build_method": "",
+    "controller": "TickTackk\\ReportReasons:ReportReason",
+    "context": "tckReportReasons",
+    "action_prefix": ""
+}
