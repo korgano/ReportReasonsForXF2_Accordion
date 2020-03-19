@@ -30,6 +30,7 @@ class Setup extends AbstractSetup
         $sm->createTable('xf_tck_report_reasons_report_reason', function(CreateDbSchema $table)
         {
             $table->addColumn('reason_id', 'int')->nullable()->autoIncrement()->primaryKey();
+            $table->addColumn('report_queue_id', 'int')->nullable();
         });
     }
 
@@ -41,6 +42,16 @@ class Setup extends AbstractSetup
         {
             $table->addColumn('tck_report_reason_id', 'int')->nullable()->setDefault(null);
             $table->addKey('tck_report_reason_id');
+        });
+    }
+
+    public function upgrade1000012Step1() : void
+    {
+        $sm = $this->schemaManager();
+
+        $sm->alterTable('xf_tck_report_reasons_report_reason', function (AlterDbSchema $table)
+        {
+            $table->addColumn('report_queue_id', 'int')->nullable();
         });
     }
 

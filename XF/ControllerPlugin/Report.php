@@ -2,7 +2,9 @@
 
 namespace TickTackk\ReportReasons\XF\ControllerPlugin;
 
+use SV\ReportCentreEssentials\XF\Service\Report\Creator as ExtendedReportEssReportCreatorSvc;
 use TickTackk\ReportReasons\Entity\ReportReason as ReportReasonEntity;
+use TickTackk\ReportReasons\Listener;
 use TickTackk\ReportReasons\Repository\ReportReason as ReportReasonRepo;
 use XF\App as BaseApp;
 use XF\Mvc\Entity\Finder;
@@ -82,7 +84,7 @@ class Report extends XFCP_Report
         $reportCreatorSvc = parent::setupReportCreate($contentType, $content);
 
         // set the current reason for tracking purposes
-        $reportCreatorSvc->setReportReason($reportReason ?: $reportReasonId);
+        $reportCreatorSvc->setReportReason($reportReason);
 
         if ($reportReason)
         {
