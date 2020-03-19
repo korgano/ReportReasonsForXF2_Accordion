@@ -27,6 +27,6 @@ class Listener
         }
 
         $addOn = $installedAddOns['SV/ReportCentreEssentials']->getInstalledAddOn();
-        return $addOn->version_id >= 2040001;
+        return $addOn->version_id >= 2030000;
     }
 }
