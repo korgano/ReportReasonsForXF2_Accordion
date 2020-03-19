@@ -17,6 +17,18 @@
 			<xf:textarearow name="explain" value="{{ $reportReason.exists() ? $reportReason.MasterExplain.phrase_text : '' }}"
 							autosize="true"
 							label="{{ phrase('tckReportReasons_explanation') }}" />
+			
+			<xf:if is="$reportQueues is not empty">
+				<hr class="formRowSep" />
+				
+				<xf:radiorow name="report_queue_id" value="{$reportReason.ReportQueue.queue_id}" label="{{ phrase('tckReportReasons_report_queue') }}">
+					<xf:foreach loop="$reportQueues" value="$reportQueue">
+						<xf:option value="{$reportQueue.queue_id}"
+								   label="{$reportQueue.queue_name}"
+								   hint="{$reportQueue.queue_description}" />
+					</xf:foreach>
+				</xf:radiorow>
+			</xf:if>
 		</div>
 
 		<xf:submitrow sticky="true" icon="save" />
