@@ -29,6 +29,11 @@
 					</xf:foreach>
 				</xf:radiorow>
 			</xf:if>
+			
+			<hr class="formRowSep" />
+
+			<xf:macro template="display_order_macros" name="row"
+					  arg-value="{$reportReason.display_order}" />
 		</div>
 
 		<xf:submitrow sticky="true" icon="save" />

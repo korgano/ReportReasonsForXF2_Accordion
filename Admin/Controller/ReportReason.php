@@ -8,10 +8,12 @@ use TickTackk\ReportReasons\Entity\ReportReason as ReportReasonEntity;
 use TickTackk\ReportReasons\Listener;
 use XF\Admin\Controller\AbstractController;
 use XF\ControllerPlugin\Delete as DeleteControllerPlugin;
+use XF\ControllerPlugin\Sort as SortControllerPlugin;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Repository;
 use XF\Mvc\FormAction;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\Exception as ExceptionReply;
 use XF\ControllerPlugin\AbstractPlugin as AbstractControllerPlugin;
 use XF\Mvc\Reply\Error as ErrorReply;
@@ -117,7 +119,9 @@ class ReportReason extends AbstractController
     {
         $formAction = $this->formAction();
 
-        $entityInput = [];
+        $entityInput = $this->filter([
+            'display_order' => 'uint'
+        ]);
         if (Listener::isReportCentreEssentialsInstalled($this->app()))
         {
             $entityInput['report_queue_id'] = $this->filter('report_queue_id', '?uint');
@@ -199,6 +203,35 @@ class ReportReason extends AbstractController
     }
 
     /**
+     * @return AbstractReply|RedirectReply|ViewReply
+     */
+    public function actionSort() : AbstractReply
+    {
+        $reportReasonRepo = $this->getReportReasonRepo();
+        $reportReasonFinder = $reportReasonRepo->findReportReasonsForList();
+        $reportReasons = $reportReasonFinder->fetch();
+
+        if ($this->isPost())
+        {
+            $sortData = $this->filter('report_reasons', 'json-array');
+
+            $sorter = $this->getSortControllerPlugin();
+            $sorter->sortFlat($sortData, $reportReasons);
+
+            return $this->redirect($this->buildLink('report-reasons'));
+        }
+
+        $viewParams = [
+            'reportReasons' => $reportReasons
+        ];
+        return $this->view(
+            'TickTackk\ReportReasons:ReportReason\Sort',
+            'tckReportReasons_report_reason_sort',
+            $viewParams
+        );
+    }
+
+    /**
      * @param int|null $reportReasonId
      * @param array $with
      *
@@ -221,6 +254,14 @@ class ReportReason extends AbstractController
     protected function getDeleteControllerPlugin() : DeleteControllerPlugin
     {
         return $this->plugin('XF:Delete');
+    }
+
+    /**
+     * @return AbstractControllerPlugin|SortControllerPlugin
+     */
+    protected function getSortControllerPlugin() : SortControllerPlugin
+    {
+        return $this->plugin('XF:Sort');
     }
 
     /**

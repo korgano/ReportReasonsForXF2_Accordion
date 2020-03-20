@@ -31,6 +31,9 @@ class Setup extends AbstractSetup
         {
             $table->addColumn('reason_id', 'int')->nullable()->autoIncrement()->primaryKey();
             $table->addColumn('report_queue_id', 'int')->nullable();
+            $table->addColumn('display_order', 'int')->setDefault(0);
+
+            $table->addKey('display_order');
         });
     }
 
@@ -53,6 +56,42 @@ class Setup extends AbstractSetup
         {
             $table->addColumn('report_queue_id', 'int')->nullable();
         });
+    }
+
+    public function upgrade1000013Step1() : void
+    {
+        $sm = $this->schemaManager();
+
+        $sm->alterTable('xf_tck_report_reasons_report_reason', function (AlterDbSchema $table)
+        {
+            $table->addColumn('display_order', 'int')->setDefault(0);
+            $table->addKey('display_order');
+        });
+    }
+
+    public function upgrade1000013Step2() : void
+    {
+        $db = $this->db();
+
+        $reportReasons = $db->fetchAllKeyed("
+            SELECT *
+            FROM xf_tck_report_reasons_report_reason
+            ORDER BY reason_id
+        ", 'reason_id');
+
+        if (\count($reportReasons))
+        {
+            $currentDisplayOrder = 5;
+
+            foreach ($reportReasons AS $reportReason)
+            {
+                $db->update('xf_tck_report_reasons_report_reason', [
+                    'display_order' => $currentDisplayOrder
+                ], 'reason_id = ?', $reportReason['reason_id']);
+
+                $currentDisplayOrder += 5;
+            }
+        }
     }
 
     public function uninstallStep1() : void

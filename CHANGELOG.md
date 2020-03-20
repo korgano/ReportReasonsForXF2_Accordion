@@ -3,6 +3,7 @@ CHANGELOG
 
 ## 1.0.0 Alpha 3 (`1000013`)
 
+- **New:** Allow changing display order of report reasons (#5)
 - **Change:** Update execution order to match with resource id on XenForo.com (#7)
 - **Fix:** Report queue relation is added to report reason entity structure even if Report Centre Essentials is not installed or enabled (#4)
 

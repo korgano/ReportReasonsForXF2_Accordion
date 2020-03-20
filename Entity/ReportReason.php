@@ -19,6 +19,7 @@ use XF\Entity\Phrase as PhraseEntity;
  * COLUMNS
  * @property int reason_id
  * @property int|null report_queue_id
+ * @property int display_order
  *
  * GETTERS
  * @property Phrase reason
@@ -171,7 +172,8 @@ class ReportReason extends Entity
         $structure->primaryKey = 'reason_id';
         $structure->columns = [
             'reason_id' => ['type' => static::UINT, 'autoIncrement' => true, 'nullable' => true],
-            'report_queue_id' => ['type' => static::UINT, 'default' => 0, 'nullable' => true]
+            'report_queue_id' => ['type' => static::UINT, 'default' => 0, 'nullable' => true],
+            'display_order' => ['type' => static::UINT, 'forced' => true, 'default' => 1]
         ];
         $structure->getters = [
             'reason' => true,

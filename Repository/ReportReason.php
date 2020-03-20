@@ -18,7 +18,7 @@ class ReportReason extends Repository
      */
     public function findReportReasonsForList() : ReportReasonFinder
     {
-        return $this->getReportReasonFinder()->setDefaultOrder('reason_id');
+        return $this->getReportReasonFinder()->setDefaultOrder('display_order');
     }
 
     /**

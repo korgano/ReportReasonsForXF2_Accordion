@@ -1,7 +1,10 @@
 <xf:title>{{ phrase('tckReportReasons_report_reasons') }}</xf:title>
 
 <xf:pageaction>
-	<xf:button href="{{ link('report-reasons/add') }}" icon="add">{{ phrase('tckReportReasons_add_report_reason') }}</xf:button>
+	<div class="buttonGroup">
+		<xf:button href="{{ link('report-reasons/add') }}" icon="add">{{ phrase('tckReportReasons_add_report_reason') }}</xf:button>
+		<xf:button href="{{ link('report-reasons/sort') }}" icon="sort" overlay="true" />
+	</div>
 </xf:pageaction>
 
 <xf:if is="$reportReasons is not empty">
