@@ -194,16 +194,20 @@ class ReportReason extends Entity
                     ['language_id', '=', 0],
                     ['title', '=', static::REASON_EXPLAIN_PHRASE_GROUP, '$reason_id']
                 ]
-            ],
-            'ReportQueue' => [
+            ]
+        ];
+
+        if (Listener::isReportCentreEssentialsInstalled())
+        {
+            $structure->relations['ReportQueue'] = [
                 'entity' => 'SV\ReportCentreEssentials:ReportQueue',
                 'type' => static::TO_ONE,
                 'conditions' => [
                     ['queue_id', '=', '$report_queue_id']
                 ],
                 'primary' => true
-            ]
-        ];
+            ];
+        }
 
         return $structure;
     }
