@@ -1,6 +1,6 @@
 {
     "from_class": "XF\\ControllerPlugin\\Report",
     "to_class": "TickTackk\\ReportReasons\\XF\\ControllerPlugin\\Report",
-    "execute_order": 10,
+    "execute_order": 7638,
     "active": true
 }
