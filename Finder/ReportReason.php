@@ -11,5 +11,13 @@ use XF\Mvc\Entity\Finder;
  */
 class ReportReason extends Finder
 {
+    /**
+     * @return $this
+     */
+    public function isActive() : self
+    {
+        $this->where('active', true);
 
+        return $this;
+    }
 }

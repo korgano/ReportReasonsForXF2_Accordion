@@ -1,0 +1,27 @@
+<xf:title>{{ phrase('tckReportReasons_sort_report_reasons') }}</xf:title>
+
+<xf:macro template="public:nestable_macros" name="setup" />
+
+<xf:form action="{{ link('report-reasons/sort') }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<div class="nestable-container" data-xf-init="nestable" data-max-depth="1" data-value-function="serialize">
+				<xf:macro name="report_reason_list" arg-reportReasons="{$reportReasons}" />
+				
+				<xf:hiddenval name="report_reasons" value="" />
+			</div>
+		</div>
+		<xf:submitrow icon="save" rowtype="simple" />
+	</div>
+</xf:form>
+
+<xf:macro name="report_reason_list" arg-reportReasons="!">
+	<ol class="nestable-list">
+		<xf:foreach loop="$reportReasons" key="$id" value="$reportReason">
+			<li class="nestable-item" data-id="{$id}">
+				<div class="nestable-handle" aria-label="{{ phrase('drag_handle')|for_attr }}"><xf:fa icon="fa-bars" /></div>
+				<div class="nestable-content">{$reportReason.reason}</div>
+			</li>
+		</xf:foreach>
+	</ol>
+</xf:macro>

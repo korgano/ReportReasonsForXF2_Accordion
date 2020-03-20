@@ -19,6 +19,8 @@ use XF\Entity\Phrase as PhraseEntity;
  * COLUMNS
  * @property int reason_id
  * @property int|null report_queue_id
+ * @property int display_order
+ * @property int active
  *
  * GETTERS
  * @property Phrase reason
@@ -171,7 +173,9 @@ class ReportReason extends Entity
         $structure->primaryKey = 'reason_id';
         $structure->columns = [
             'reason_id' => ['type' => static::UINT, 'autoIncrement' => true, 'nullable' => true],
-            'report_queue_id' => ['type' => static::UINT, 'default' => 0, 'nullable' => true]
+            'report_queue_id' => ['type' => static::UINT, 'default' => 0, 'nullable' => true],
+            'display_order' => ['type' => static::UINT, 'forced' => true, 'default' => 1],
+            'active' => ['type' => self::BOOL, 'default' => true]
         ];
         $structure->getters = [
             'reason' => true,
@@ -194,16 +198,20 @@ class ReportReason extends Entity
                     ['language_id', '=', 0],
                     ['title', '=', static::REASON_EXPLAIN_PHRASE_GROUP, '$reason_id']
                 ]
-            ],
-            'ReportQueue' => [
+            ]
+        ];
+
+        if (Listener::isReportCentreEssentialsInstalled())
+        {
+            $structure->relations['ReportQueue'] = [
                 'entity' => 'SV\ReportCentreEssentials:ReportQueue',
                 'type' => static::TO_ONE,
                 'conditions' => [
                     ['queue_id', '=', '$report_queue_id']
                 ],
                 'primary' => true
-            ]
-        ];
+            ];
+        }
 
         return $structure;
     }

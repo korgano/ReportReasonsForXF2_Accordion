@@ -46,7 +46,7 @@ class Report extends XFCP_Report
         if ($reply instanceof ViewReply)
         {
             $reportReasonRepo = $this->getReportReasonRepo();
-            $reportReasonFinder = $reportReasonRepo->findReportReasonsForList();
+            $reportReasonFinder = $reportReasonRepo->findReportReasonsForList()->isActive();
 
             $reply->setParam('reportReasons', $reportReasonFinder->fetch());
         }
@@ -98,18 +98,27 @@ class Report extends XFCP_Report
     /**
      * @param int|null $reportReasonId
      * @param array $with
+     * @param string $phraseKey
      *
      * @return ReportReasonEntity|Entity
      *
      * @throws ExceptionReply
      */
-    protected function assertReportReasonExists(?int $reportReasonId, array $with = []) : ReportReasonEntity
+    protected function assertReportReasonExists(?int $reportReasonId, array $with = [], string $phraseKey = 'tckReportReasons_requested_report_reason_not_found') : ReportReasonEntity
     {
-        return $this->assertRecordExists(
+        /** @var ReportReasonEntity $reportReason */
+        $reportReason = $this->assertRecordExists(
             'TickTackk\ReportReasons:ReportReason',
             $reportReasonId, $with,
-            'tckReportReasons_requested_report_reason_not_found'
+            $phraseKey
         );
+
+        if (!$reportReason->active)
+        {
+            throw $this->exception($this->noPermission(\XF::phrase($phraseKey)));
+        }
+
+        return $reportReason;
     }
 
     /**
