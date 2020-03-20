@@ -8,11 +8,11 @@
 </xf:pageaction>
 
 <xf:if is="$reportReasons is not empty">
-	<div class="block">
+	<xf:form action="{{ link('report-reasons/toggle') }}" ajax="true" class="block">
 		<div class="block-outer">
 			<xf:macro template="filter_macros" name="quick_filter" arg-key="tckReportReasons" arg-class="block-outer-opposite" />
 		</div>
-		
+
 		<div class="block-container">
 			<div class="block-body">
 				<xf:datalist>
@@ -22,17 +22,20 @@
 								<xf:label>{$reportReason.reason}</xf:label>
 								<xf:explain>{$reportReason.explain}</xf:explain>
 							</xf:main>
+							<xf:toggle name="active[{$reportReason.reason_id}]" selected="$reportReason.active"
+									   class="dataList-cell--separated" submit="true"
+									   tooltip="{{ phrase('enable_disable_x', {'title': $reportReason.reason}) }}" />
 							<xf:delete href="{{ link('report-reasons/delete', $reportReason) }}" />
 						</xf:datarow>
 					</xf:foreach>
 				</xf:datalist>
 			</div>
-			
+
 			<div class="block-footer">
 				<span class="block-footer-counter">{{ display_totals($reportReasons) }}</span>
 			</div>
 		</div>
-	</div>
+	</xf:form>
 <xf:else />
 	<div class="blockMessage">{{ phrase('no_items_have_been_created_yet') }}</div>
 </xf:if>

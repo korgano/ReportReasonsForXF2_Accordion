@@ -9,6 +9,7 @@ use TickTackk\ReportReasons\Listener;
 use XF\Admin\Controller\AbstractController;
 use XF\ControllerPlugin\Delete as DeleteControllerPlugin;
 use XF\ControllerPlugin\Sort as SortControllerPlugin;
+use XF\ControllerPlugin\Toggle as ToggleControllerPlugin;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Repository;
 use XF\Mvc\FormAction;
@@ -17,6 +18,7 @@ use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\Exception as ExceptionReply;
 use XF\ControllerPlugin\AbstractPlugin as AbstractControllerPlugin;
 use XF\Mvc\Reply\Error as ErrorReply;
+use XF\Mvc\Reply\Message as MessageReply;
 use XF\Mvc\Reply\Redirect as RedirectReply;
 use XF\Mvc\Reply\View as ViewReply;
 use TickTackk\ReportReasons\Repository\ReportReason as ReportReasonRepo;
@@ -120,7 +122,8 @@ class ReportReason extends AbstractController
         $formAction = $this->formAction();
 
         $entityInput = $this->filter([
-            'display_order' => 'uint'
+            'display_order' => 'uint',
+            'active' => 'bool'
         ]);
         if (Listener::isReportCentreEssentialsInstalled($this->app()))
         {
@@ -232,6 +235,15 @@ class ReportReason extends AbstractController
     }
 
     /**
+     * @return MessageReply
+     */
+    public function actionToggle() : MessageReply
+    {
+        $toggleControllerPlugin = $this->getToggleControllerPlugin();
+        return $toggleControllerPlugin->actionToggle('TickTackk\ReportReasons:ReportReason');
+    }
+
+    /**
      * @param int|null $reportReasonId
      * @param array $with
      *
@@ -262,6 +274,14 @@ class ReportReason extends AbstractController
     protected function getSortControllerPlugin() : SortControllerPlugin
     {
         return $this->plugin('XF:Sort');
+    }
+
+    /**
+     * @return AbstractControllerPlugin|ToggleControllerPlugin
+     */
+    protected function getToggleControllerPlugin() : ToggleControllerPlugin
+    {
+        return $this->plugin('XF:Toggle');
     }
 
     /**

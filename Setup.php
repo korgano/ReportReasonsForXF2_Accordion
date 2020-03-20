@@ -32,6 +32,7 @@ class Setup extends AbstractSetup
             $table->addColumn('reason_id', 'int')->nullable()->autoIncrement()->primaryKey();
             $table->addColumn('report_queue_id', 'int')->nullable();
             $table->addColumn('display_order', 'int')->setDefault(0);
+            $table->addColumn('active', 'tinyint');
 
             $table->addKey('display_order');
         });
@@ -92,6 +93,23 @@ class Setup extends AbstractSetup
                 $currentDisplayOrder += 5;
             }
         }
+    }
+
+    public function upgrade1000013Step3() : void
+    {
+        $sm = $this->schemaManager();
+
+        $sm->alterTable('xf_tck_report_reasons_report_reason', function (AlterDbSchema $table)
+        {
+            $table->addColumn('active', 'tinyint');
+        });
+    }
+
+    public function upgrade1000013Step4() : void
+    {
+        $this->db()->update('xf_tck_report_reasons_report_reason', [
+            'active' => 1
+        ], 'active = ?', 0);
     }
 
     public function uninstallStep1() : void
