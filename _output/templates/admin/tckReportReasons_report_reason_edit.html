@@ -34,6 +34,11 @@
 
 			<xf:macro template="display_order_macros" name="row"
 					  arg-value="{$reportReason.display_order}" />
+			
+			<xf:checkboxrow explain="{{ phrase('tckReportReasons_enable_report_reason_explain') }}">
+				<xf:option name="active" selected="$reportReason.active"
+						   label="{{ phrase('tckReportReasons_enable_report_reason') }}" />
+			</xf:checkboxrow>
 		</div>
 
 		<xf:submitrow sticky="true" icon="save" />

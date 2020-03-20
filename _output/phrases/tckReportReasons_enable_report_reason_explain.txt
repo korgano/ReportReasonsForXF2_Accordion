@@ -1,0 +1,1 @@
+If disabled, user will not be able to see this report reason in public when reporting content.
