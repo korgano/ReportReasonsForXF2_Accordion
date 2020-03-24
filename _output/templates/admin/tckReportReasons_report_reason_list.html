@@ -2,10 +2,14 @@
 
 <xf:pageaction>
 	<div class="buttonGroup">
-		<xf:button href="{{ link('report-reasons/add') }}" icon="add">{{ phrase('tckReportReasons_add_report_reason') }}</xf:button>
-		<xf:button href="{{ link('report-reasons/sort') }}" icon="sort" overlay="true" />
-		<xf:if is="$reportReasons is not empty">
-			<xf:button href="{{ link('report-reasons', null, {'export': ($exportView ? '' : '1')}) }}" icon="export" />
+		<xf:if is="!$exportView">
+			<xf:button href="{{ link('report-reasons/add') }}" icon="add">{{ phrase('tckReportReasons_add_report_reason') }}</xf:button>
+			<xf:button href="{{ link('report-reasons/sort') }}" icon="sort" overlay="true" />
+
+			<xf:button href="{{ link('report-reasons/import') }}" icon="import" overlay="true" />
+			<xf:if is="$reportReasons is not empty">
+				<xf:button href="{{ link('report-reasons', null, {'export': ($exportView ? '' : '1')}) }}" icon="export" />
+			</xf:if>
 		</xf:if>
 	</div>
 </xf:pageaction>
