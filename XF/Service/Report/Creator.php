@@ -2,20 +2,10 @@
 
 namespace TickTackk\ReportReasons\XF\Service\Report;
 
-use SV\ReportCentreEssentials\XF\Service\Report\Creator as ExtendedReportEssReportCreatorSvc;
 use TickTackk\ReportReasons\Entity\ReportReason as ReportReasonEntity;
 use TickTackk\ReportReasons\Listener;
-use TickTackk\ReportReasons\XF\Service\Report\Creator as ExtendedReportCreatorSvc;
-use TickTackk\ReportReasons\XF\Service\Report\Exception\InvalidReportReasonProvidedException;
-use XF\App as BaseApp;
 use XF\Entity\ReportComment as ReportCommentEntity;
 use TickTackk\ReportReasons\XF\Entity\ReportComment as ExtendedReportCommentEntity;
-use XF\Mvc\Entity\Finder;
-use XF\Mvc\Entity\Entity;
-use XF\Mvc\Entity\Repository;
-use XF\Service\AbstractService;
-use XF\Mvc\Entity\Manager as EntityManager;
-use XF\Job\Manager as JobManager;
 
 /**
  * Class Creator

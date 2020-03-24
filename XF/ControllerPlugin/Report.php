@@ -2,9 +2,7 @@
 
 namespace TickTackk\ReportReasons\XF\ControllerPlugin;
 
-use SV\ReportCentreEssentials\XF\Service\Report\Creator as ExtendedReportEssReportCreatorSvc;
 use TickTackk\ReportReasons\Entity\ReportReason as ReportReasonEntity;
-use TickTackk\ReportReasons\Listener;
 use TickTackk\ReportReasons\Repository\ReportReason as ReportReasonRepo;
 use XF\App as BaseApp;
 use XF\Mvc\Entity\Finder;
@@ -13,9 +11,6 @@ use XF\Mvc\Entity\Repository;
 use XF\Mvc\Reply\View as ViewReply;
 use XF\Mvc\Reply\Error as ErrorReply;
 use XF\Mvc\Reply\Redirect as RedirectReply;
-use XF\Service\AbstractService;
-use XF\Mvc\Entity\Manager as EntityManager;
-use XF\Job\Manager as JobManager;
 use XF\Service\Report\Creator as ReportCreatorSvc;
 use TickTackk\ReportReasons\XF\Service\Report\Creator as ExtendedReportCreatorSvc;
 use XF\Http\Request as HttpRequest;

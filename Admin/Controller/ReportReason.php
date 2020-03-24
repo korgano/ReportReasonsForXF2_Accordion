@@ -2,7 +2,6 @@
 
 namespace TickTackk\ReportReasons\Admin\Controller;
 
-use SV\ReportCentreEssentials\Entity\ReportQueue as ReportQueueEntity;
 use SV\ReportCentreEssentials\Repository\ReportQueue as ReportQueueRepo;
 use TickTackk\ReportReasons\Entity\ReportReason as ReportReasonEntity;
 use TickTackk\ReportReasons\Listener;
@@ -23,7 +22,6 @@ use XF\Mvc\Reply\Message as MessageReply;
 use XF\Mvc\Reply\Redirect as RedirectReply;
 use XF\Mvc\Reply\View as ViewReply;
 use TickTackk\ReportReasons\Repository\ReportReason as ReportReasonRepo;
-use XF\AddOn\Manager as AddOnManager;
 
 /**
  * Class ReportReason
