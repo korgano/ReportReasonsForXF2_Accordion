@@ -10,6 +10,7 @@ use XF\Admin\Controller\AbstractController;
 use XF\ControllerPlugin\Delete as DeleteControllerPlugin;
 use XF\ControllerPlugin\Sort as SortControllerPlugin;
 use XF\ControllerPlugin\Toggle as ToggleControllerPlugin;
+use XF\ControllerPlugin\Xml as XmlControllerPlugin;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Repository;
 use XF\Mvc\FormAction;
@@ -51,7 +52,8 @@ class ReportReason extends AbstractController
         $reportReasonFinder = $reportReasonRepo->findReportReasonsForList();
 
         $viewParams = [
-            'reportReasons' => $reportReasonFinder->fetch()
+            'reportReasons' => $reportReasonFinder->fetch(),
+            'exportView' => $this->filter('export', 'bool')
         ];
 
         return $this->view(
@@ -244,6 +246,40 @@ class ReportReason extends AbstractController
     }
 
     /**
+     * @return ViewReply
+     *
+     * @throws ExceptionReply
+     */
+    public function actionExport() : ViewReply
+    {
+        $reportReasonRepo = $this->getReportReasonRepo();
+        $reportReasonFinder = $reportReasonRepo->getReportReasonFinder()
+            ->where('reason_id', $this->filter('export', 'array-uint'));
+
+        $xmlControllerPlugin = $this->getXmlControllerPlugin();
+        return $xmlControllerPlugin->actionExport(
+            $reportReasonFinder,
+            'TickTackk\ReportReasons:ReportReason\Exporter',
+            'TickTackk\ReportReasons:ReportReason\Export'
+        );
+    }
+
+    /**
+     * @return ErrorReply|RedirectReply|ViewReply
+     *
+     * @throws ExceptionReply
+     */
+    public function actionImport() : AbstractReply
+    {
+        $xmlControllerPlugin = $this->getXmlControllerPlugin();
+        return $xmlControllerPlugin->actionImport(
+            'report-reasons',
+            'report_reasons',
+            'TickTackk\ReportReasons:ReportReason\Importer'
+        );
+    }
+
+    /**
      * @param int|null $reportReasonId
      * @param array $with
      *
@@ -282,6 +318,14 @@ class ReportReason extends AbstractController
     protected function getToggleControllerPlugin() : ToggleControllerPlugin
     {
         return $this->plugin('XF:Toggle');
+    }
+
+    /**
+     * @return AbstractControllerPlugin|XmlControllerPlugin
+     */
+    protected function getXmlControllerPlugin() : XmlControllerPlugin
+    {
+        return $this->plugin('XF:Xml');
     }
 
     /**

@@ -1,6 +1,10 @@
 CHANGELOG
 ==========================
 
+## 1.0.0 (`1000070`)
+
+- **New:** Allow exporting/importing report reasons (#9)
+
 ## 1.0.0 Alpha 3 (`1000013`)
 
 - **New:** Allow changing display order of report reasons (#5)
