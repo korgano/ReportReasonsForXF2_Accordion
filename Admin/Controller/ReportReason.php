@@ -138,6 +138,11 @@ class ReportReason extends AbstractController
             $entityInput['report_queue_id'] = $this->filter('report_queue_id', '?uint');
         }
 
+        if ($reportReason->exists() && $reportReason->reason_id === 0)
+        {
+            unset($entityInput['active']);
+        }
+
         $phraseInput = $this->filter([
             'reason' => 'str',
             'explain' => 'str'
