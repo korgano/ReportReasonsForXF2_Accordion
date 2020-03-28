@@ -8,7 +8,7 @@
 	<xf:button href="{{ link('report-reasons/delete', $reportReason) }}" icon="delete" overlay="true" />
 </xf:pageaction>
 
-<xf:form action="{{ link('report-reasons/save', $reportReason) }}" ajax="true" class="block">
+<xf:form action="{{ link('report-reasons/save', ($reportReason.isUpdate() ? $reportReason : null)) }}" ajax="true" class="block">
 	<div class="block-container">
 		<div class="block-body">
 			<xf:textboxrow name="reason" value="{{ $reportReason.exists() ? $reportReason.MasterReason.phrase_text : '' }}"
@@ -35,10 +35,12 @@
 			<xf:macro template="display_order_macros" name="row"
 					  arg-value="{$reportReason.display_order}" />
 			
-			<xf:checkboxrow explain="{{ phrase('tckReportReasons_enable_report_reason_explain') }}">
-				<xf:option name="active" selected="$reportReason.active"
-						   label="{{ phrase('tckReportReasons_enable_report_reason') }}" />
-			</xf:checkboxrow>
+			<xf:if is="$reportReason.canEdit()">
+				<xf:checkboxrow explain="{{ phrase('tckReportReasons_enable_report_reason_explain') }}">
+					<xf:option name="active" selected="$reportReason.active"
+							   label="{{ phrase('tckReportReasons_enable_report_reason') }}" />
+				</xf:checkboxrow>
+			</xf:if>
 		</div>
 
 		<xf:submitrow sticky="true" icon="save" />

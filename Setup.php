@@ -11,6 +11,9 @@ use XF\Db\Schema\Alter as AlterDbSchema;
 use XF\Db\Schema\Create as CreateDbSchema;
 use XF\Entity\Phrase as PhraseEntity;
 use XF\Finder\Phrase as PhraseFinder;
+use XF\Mvc\Entity\Finder;
+use XF\Mvc\Entity\Finder as ReportReasonFinder;
+use XF\Mvc\Entity\Manager as EntityManager;
 
 /**
  * Class Setup
@@ -47,6 +50,61 @@ class Setup extends AbstractSetup
             $table->addColumn('tck_report_reason_id', 'int')->nullable()->setDefault(null);
             $table->addKey('tck_report_reason_id');
         });
+    }
+
+    /**
+     * @throws \XF\Db\Exception
+     */
+    public function installStep3() : void
+    {
+        $db = $this->db();
+
+        $originalSqlMode = $db->fetchOne('SELECT @@sql_mode');
+
+        $tmpSqlMode = \explode(',', $originalSqlMode);
+        $tmpSqlMode[] = 'NO_AUTO_VALUE_ON_ZERO';
+        $tmpSqlMode = \implode(',', \array_unique($tmpSqlMode));
+
+        $db->query("SET SESSION sql_mode = ?", $tmpSqlMode);
+
+        $db->insert('xf_tck_report_reasons_report_reason', [
+            'reason_id' => 0,
+            'report_queue_id' => 1, // default is 1
+            'display_order' => 100,
+            'active' => 1
+        ]);
+
+        $db->query("SET SESSION sql_mode = ?", $originalSqlMode);
+    }
+
+    /**
+     * @throws \XF\PrintableException
+     */
+    public function installStep4() : void
+    {
+        $db = $this->db();
+        $db->beginTransaction();
+
+        $phrases = [
+            ReportReasonEntity::REASON_PHRASE_GROUP . '0' => 'Other',
+            ReportReasonEntity::REASON_EXPLAIN_PHRASE_GROUP . '0' => 'Please use "More information" field to explain further.'
+        ];
+
+        foreach ($phrases AS $title => $phraseText)
+        {
+            $phrase = $this->em()->findOne('XF:Phrase', ['title' => $title]);
+            if (!$phrase)
+            {
+                /** @var PhraseEntity $phrase */
+                $phrase = $this->em()->create('XF:Phrase');
+                $phrase->language_id = 0;
+                $phrase->title = $title;
+                $phrase->phrase_text = $phraseText;
+                $phrase->save(false, false);
+            }
+        }
+
+        $db->commit();
     }
 
     public function upgrade1000012Step1() : void
@@ -112,6 +170,22 @@ class Setup extends AbstractSetup
         ], 'active = ?', 0);
     }
 
+    /**
+     * @throws \XF\Db\Exception
+     */
+    public function upgrade1010070Step1() : void
+    {
+        $this->installStep3();
+    }
+
+    /**
+     * @throws \XF\PrintableException
+     */
+    public function upgrade1010070Step2() : void
+    {
+        $this->installStep4();
+    }
+
     public function uninstallStep1() : void
     {
         $sm = $this->schemaManager();
@@ -160,5 +234,31 @@ class Setup extends AbstractSetup
         }
 
         $db->commit();
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function em() : EntityManager
+    {
+        return $this->app()->em();
+    }
+
+    /**
+     * @param string $identifier
+     *
+     * @return Finder
+     */
+    protected function finder(string $identifier) : Finder
+    {
+        return $this->app()->finder($identifier);
+    }
+
+    /**
+     * @return Finder|ReportReasonFinder
+     */
+    public function getReportReasonFinder() : ReportReasonFinder
+    {
+        return $this->finder('TickTackk\ReportReasons:ReportReason');
     }
 }

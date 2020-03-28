@@ -15,5 +15,6 @@ namespace TickTackk\ReportReasons\XF\Entity
 
 namespace TickTackk\ReportReasons\XF\Service\Report
 {
+	class XFCP_CommentPreparer extends \XF\Service\Report\CommentPreparer {}
 	class XFCP_Creator extends \XF\Service\Report\Creator {}
 }

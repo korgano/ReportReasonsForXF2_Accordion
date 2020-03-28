@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Service\\Report\\CommentPreparer",
+    "to_class": "TickTackk\\ReportReasons\\XF\\Service\\Report\\CommentPreparer",
+    "execute_order": 7638,
+    "active": true
+}
