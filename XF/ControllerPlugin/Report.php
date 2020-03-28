@@ -2,15 +2,17 @@
 
 namespace TickTackk\ReportReasons\XF\ControllerPlugin;
 
+use TickTackk\ReportReasons\ControllerPlugin\ReportReason as ReportReasonControllerPlugin;
 use TickTackk\ReportReasons\Entity\ReportReason as ReportReasonEntity;
 use TickTackk\ReportReasons\Repository\ReportReason as ReportReasonRepo;
-use XF\App as BaseApp;
-use XF\Mvc\Entity\Finder;
+use XF\ControllerPlugin\AbstractPlugin as AbstractControllerPlugin;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Repository;
+use XF\Mvc\Reply\Exception;
 use XF\Mvc\Reply\View as ViewReply;
 use XF\Mvc\Reply\Error as ErrorReply;
 use XF\Mvc\Reply\Redirect as RedirectReply;
+use XF\Phrase;
 use XF\Service\Report\Creator as ReportCreatorSvc;
 use TickTackk\ReportReasons\XF\Service\Report\Creator as ExtendedReportCreatorSvc;
 use XF\Http\Request as HttpRequest;
@@ -59,32 +61,58 @@ class Report extends XFCP_Report
      */
     protected function setupReportCreate($contentType, Entity $content)
     {
-        $originalMessage = $this->filter('message', 'str');
-        $reportReasonId = $this->filter('reason_id', 'uint');
-        $reportReason = null;
-        $request = $this->request();
-
-        if ($reportReasonId)
+        $reportReasonRepo = $this->getReportReasonRepo();
+        $reportReasonsCount = $reportReasonRepo->findReportReasonsForList()->total();
+        if ($reportReasonsCount <= 1)
         {
-            // create original reason backup
-            $originalMessage = $request->filter('message', 'str');
-
-            $reportReason = $this->assertReportReasonExists($reportReasonId);
-
-            // set report reason in input
-            $this->request()->set('message', $reportReason->reason->render('raw'));
+            return parent::setupReportCreate($contentType, $content);
         }
 
+        $reportReasonId = $this->filter('reason_id', 'int');
+        $reportReason = $this->assertReportReasonExists($reportReasonId);
+
         /** @var ExtendedReportCreatorSvc $reportCreatorSvc */
-        $reportCreatorSvc = parent::setupReportCreate($contentType, $content);
+
+        $originalMessage = $this->filter('message', 'str');
+        if ($originalMessage === '' && $reportReason->reason_id)
+        {
+            $this->request()->set('message', \XF::generateRandomString(10));
+        }
+
+        try
+        {
+            $reportCreatorSvc = parent::setupReportCreate($contentType, $content);
+        }
+        catch (ExceptionReply $exception)
+        {
+            if ($reportReason->reason_id === 0)
+            {
+                $reply = $exception->getReply();
+                if ($reply instanceof ErrorReply)
+                {
+                    $errors = $reply->getErrors();
+                    foreach ($errors AS $index => $error)
+                    {
+                        if ($error instanceof Phrase
+                            && $error->getName() === 'please_enter_reason_for_reporting_this_message'
+                        )
+                        {
+                            $errors[$index] = \XF::phrase(ReportReasonEntity::REASON_EXPLAIN_PHRASE_GROUP . '0');
+                        }
+                    }
+                    $reply->setErrors($errors, false);
+                }
+            }
+
+            throw $exception;
+        }
 
         // set the current reason for tracking purposes
-        $reportCreatorSvc->setReportReason($reportReason);
+        $reportCreatorSvc->setReportReason($reportReason, $originalMessage);
 
-        if ($reportReason)
+        if ($originalMessage === '' && $reportReason->reason_id)
         {
-            // restore original message (even if it's empty)
-            $request->set('message', $originalMessage);
+            $this->request()->set('message', $originalMessage);
         }
 
         return $reportCreatorSvc;
@@ -93,27 +121,14 @@ class Report extends XFCP_Report
     /**
      * @param int|null $reportReasonId
      * @param array $with
-     * @param string $phraseKey
      *
-     * @return ReportReasonEntity|Entity
+     * @return ReportReasonEntity
      *
      * @throws ExceptionReply
      */
-    protected function assertReportReasonExists(?int $reportReasonId, array $with = [], string $phraseKey = 'tckReportReasons_requested_report_reason_not_found') : ReportReasonEntity
+    protected function assertReportReasonExists(?int $reportReasonId, array $with = []) : ReportReasonEntity
     {
-        /** @var ReportReasonEntity $reportReason */
-        $reportReason = $this->assertRecordExists(
-            'TickTackk\ReportReasons:ReportReason',
-            $reportReasonId, $with,
-            $phraseKey
-        );
-
-        if (!$reportReason->active)
-        {
-            throw $this->exception($this->noPermission(\XF::phrase($phraseKey)));
-        }
-
-        return $reportReason;
+        return $this->getReportReasonControllerPlugin()->assertReportReasonExists($reportReasonId, $with);
     }
 
     /**
@@ -130,5 +145,13 @@ class Report extends XFCP_Report
     protected function getReportReasonRepo() : ReportReasonRepo
     {
         return $this->repository('TickTackk\ReportReasons:ReportReason');
+    }
+
+    /**
+     * @return AbstractControllerPlugin|ReportReasonControllerPlugin
+     */
+    protected function getReportReasonControllerPlugin() : ReportReasonControllerPlugin
+    {
+        return $this->plugin('TickTackk\ReportReasons:ReportReason');
     }
 }

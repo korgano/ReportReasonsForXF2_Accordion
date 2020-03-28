@@ -22,6 +22,7 @@ use XF\Mvc\Reply\Message as MessageReply;
 use XF\Mvc\Reply\Redirect as RedirectReply;
 use XF\Mvc\Reply\View as ViewReply;
 use TickTackk\ReportReasons\Repository\ReportReason as ReportReasonRepo;
+use TickTackk\ReportReasons\ControllerPlugin\ReportReason as ReportReasonControllerPlugin;
 
 /**
  * Class ReportReason
@@ -46,12 +47,19 @@ class ReportReason extends AbstractController
      */
     public function actionIndex() : ViewReply
     {
+        $exportView = $this->filter('export', 'bool');
+
         $reportReasonRepo = $this->getReportReasonRepo();
         $reportReasonFinder = $reportReasonRepo->findReportReasonsForList();
 
+        if ($exportView)
+        {
+            $reportReasonFinder->isNotDefaultReason();
+        }
+
         $viewParams = [
             'reportReasons' => $reportReasonFinder->fetch(),
-            'exportView' => $this->filter('export', 'bool')
+            'exportView' => $exportView
         ];
 
         return $this->view(
@@ -170,7 +178,7 @@ class ReportReason extends AbstractController
     {
         $this->assertPostOnly();
 
-        if ($parameterBag->reason_id)
+        if (isset($parameterBag['reason_id']))
         {
             $reportReason = $this->assertReportReasonExists($parameterBag->reason_id);
         }
@@ -252,7 +260,8 @@ class ReportReason extends AbstractController
     {
         $reportReasonRepo = $this->getReportReasonRepo();
         $reportReasonFinder = $reportReasonRepo->getReportReasonFinder()
-            ->where('reason_id', $this->filter('export', 'array-uint'));
+            ->where('reason_id', $this->filter('export', 'array-uint'))
+            ->where('reason_id', '<>', 0);
 
         $xmlControllerPlugin = $this->getXmlControllerPlugin();
         return $xmlControllerPlugin->actionExport(
@@ -287,11 +296,7 @@ class ReportReason extends AbstractController
      */
     protected function assertReportReasonExists(?int $reportReasonId, array $with = []) : ReportReasonEntity
     {
-        return $this->assertRecordExists(
-            'TickTackk\ReportReasons:ReportReason',
-            $reportReasonId, $with,
-            'tckReportReasons_requested_report_reason_not_found'
-        );
+        return $this->getReportReasonControllerPlugin()->assertReportReasonExists($reportReasonId, $with);
     }
 
     /**
@@ -324,6 +329,14 @@ class ReportReason extends AbstractController
     protected function getXmlControllerPlugin() : XmlControllerPlugin
     {
         return $this->plugin('XF:Xml');
+    }
+
+    /**
+     * @return AbstractControllerPlugin|ReportReasonControllerPlugin
+     */
+    protected function getReportReasonControllerPlugin() : ReportReasonControllerPlugin
+    {
+        return $this->plugin('TickTackk\ReportReasons:ReportReason');
     }
 
     /**

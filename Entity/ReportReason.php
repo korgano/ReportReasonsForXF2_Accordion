@@ -41,6 +41,24 @@ class ReportReason extends Entity
     public const DEFAULT_REPORT_QUEUE_ID = 1;
 
     /**
+     * @return bool
+     */
+    public function canEdit() : bool
+    {
+        if ($this->isInsert())
+        {
+            return true;
+        }
+
+        if ($this->reason_id !== 0)
+        {
+            return true;
+        }
+
+        return $this->reason_id !== 0 && $this->isUpdate();
+    }
+
+    /**
      * @param int|null $reportQueueId
      *
      * @return bool
@@ -159,6 +177,27 @@ class ReportReason extends Entity
         }
 
         return $reportQueue;
+    }
+
+    protected function _preSave() : void
+    {
+        if (!$this->canEdit())
+        {
+            if ($this->isChanged(['active']))
+            {
+                $this->error(\XF::phrase('tckReportReasons_default_report_reason_cannot_be_disabled'));
+                return;
+            }
+        }
+    }
+
+    protected function _preDelete() : void
+    {
+        if (!$this->canEdit())
+        {
+            $this->error(\XF::phrase('tckReportReasons_default_report_reason_cannot_be_deleted'));
+            return;
+        }
     }
 
     /**

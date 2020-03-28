@@ -35,6 +35,11 @@ class Exporter extends AbstractXmlExport
      */
     protected function exportEntry(Entity $entity, \DOMElement $node) : void
     {
+        if ($entity->reason_id === 0)
+        {
+            return;
+        }
+
         $childNodes = [
             'reason' => $entity->MasterReason->phrase_text,
             'explain' => $entity->MasterExplain->phrase_text

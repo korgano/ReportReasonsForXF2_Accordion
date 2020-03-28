@@ -1,0 +1,2 @@
+When reporting, the user selected "{reason}" and has provided the following information:
+[QUOTE]{message}[/QUOTE]

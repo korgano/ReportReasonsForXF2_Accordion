@@ -35,10 +35,15 @@
 								<xf:explain>{$reportReason.explain}</xf:explain>
 							</xf:main>
 							<xf:if is="!$exportView">
-								<xf:toggle name="active[{$reportReason.reason_id}]" selected="$reportReason.active"
-										   class="dataList-cell--separated" submit="true"
-										   tooltip="{{ phrase('enable_disable_x', {'title': $reportReason.reason}) }}" />
-								<xf:delete href="{{ link('report-reasons/delete', $reportReason) }}" />
+								<xf:if is="$reportReason.reason_id !== 0">
+									<xf:toggle name="active[{$reportReason.reason_id}]" selected="$reportReason.active"
+											   class="dataList-cell--separated" submit="true"
+											   tooltip="{{ phrase('enable_disable_x', {'title': $reportReason.reason}) }}" />
+									<xf:delete href="{{ link('report-reasons/delete', $reportReason) }}" />
+								<xf:else />
+									<xf:cell href="{{ $exportView ? null : link('report-reasons/edit', $reportReason) }}">&nbsp;</xf:cell>
+									<xf:cell href="{{ $exportView ? null : link('report-reasons/edit', $reportReason) }}">&nbsp;</xf:cell>
+								</xf:if>
 							</xf:if>
 						</xf:datarow>
 					</xf:foreach>
