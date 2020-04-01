@@ -19,14 +19,14 @@ class Listener
     public static function isReportCentreEssentialsInstalled(BaseApp $app = null) : bool
     {
         $app = $app ?: \XF::app();
-        $installedAddOns = $app->addOnManager()->getInstalledAddOns();
+        $registry = $app->registry();
+        $addOns = $registry->get('addOns');
 
-        if (!\array_key_exists('SV/ReportCentreEssentials', $installedAddOns))
+        if (!\array_key_exists('SV/ReportCentreEssentials', $addOns))
         {
             return false;
         }
 
-        $addOn = $installedAddOns['SV/ReportCentreEssentials']->getInstalledAddOn();
-        return $addOn->version_id >= 2030000;
+        return $addOns['SV/ReportCentreEssentials'] >= 2030000;
     }
 }

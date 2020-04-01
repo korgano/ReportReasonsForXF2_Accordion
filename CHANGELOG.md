@@ -1,6 +1,10 @@
 CHANGELOG
 ==========================
 
+## 1.1.1 (`1010170`)
+
+- **Fix:** n+1 behavior when reporting message (#15)
+
 ## 1.1.0 (`1010070`)
 
 - **New:** Allow providing more information even with report reason is selected (#11)
