@@ -1,6 +1,10 @@
 CHANGELOG
 ==========================
 
+## 1.1.2 (`1010270`)
+
+- **Fix:** More information input value not being escaped properly (#17)
+
 ## 1.1.1 (`1010170`)
 
 - **Fix:** n+1 behavior when reporting message (#15)
