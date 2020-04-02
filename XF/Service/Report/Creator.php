@@ -23,6 +23,8 @@ class Creator extends XFCP_Creator
      */
     public function setReportReason(ReportReasonEntity $reportReason, string $originalMessage) : void
     {
+        $report = $this->report;
+
         /** @var ExtendedReportCommentPreparerSvc $commentPreparer */
         $commentPreparer = $this->getCommentPreparer();
         $commentPreparer->setReportReason($reportReason, $originalMessage);
@@ -36,7 +38,7 @@ class Creator extends XFCP_Creator
             }
 
             // set report queue only if creating (report_queue_id = null) or is in default reports queue (queue_id = 1)
-            if (!\in_array($this->report->queue_id, [ReportReasonEntity::DEFAULT_REPORT_QUEUE_ID, null], true))
+            if (!\in_array($report->queue_id, [ReportReasonEntity::DEFAULT_REPORT_QUEUE_ID, null], true))
             {
                 return;
             }
@@ -60,7 +62,6 @@ class Creator extends XFCP_Creator
             $currentMessage = $commentPreparer->getComment()->message;
             if ($currentMessage !== $originalMessage)
             {
-                $report = $this->report;
                 $handler = $report->getHandler();
 
                 $params = $handler->getContentForThreadReport($report, $originalMessage);
@@ -73,7 +74,9 @@ class Creator extends XFCP_Creator
                     $messageContentPhrase = 'tckReportReasons_reported_thread_message_with_additional_information';
                 }
 
-                $title = \XF::phrase('reported_thread_title', ['title' => $handler->getContentTitle($report)])->render('raw');
+                $title = \XF::phrase('reported_thread_title', [
+                    'title' => $handler->getContentTitle($report)]
+                )->render('raw');
                 $messageContent = \XF::phrase($messageContentPhrase, $params)->render('raw');
 
                 $threadCreator->setContent($title, $messageContent);

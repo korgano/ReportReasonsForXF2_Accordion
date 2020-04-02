@@ -12,7 +12,6 @@ use XF\Db\Schema\Create as CreateDbSchema;
 use XF\Entity\Phrase as PhraseEntity;
 use XF\Finder\Phrase as PhraseFinder;
 use XF\Mvc\Entity\Finder;
-use XF\Mvc\Entity\Finder as ReportReasonFinder;
 use XF\Mvc\Entity\Manager as EntityManager;
 
 /**
@@ -252,13 +251,5 @@ class Setup extends AbstractSetup
     protected function finder(string $identifier) : Finder
     {
         return $this->app()->finder($identifier);
-    }
-
-    /**
-     * @return Finder|ReportReasonFinder
-     */
-    public function getReportReasonFinder() : ReportReasonFinder
-    {
-        return $this->finder('TickTackk\ReportReasons:ReportReason');
     }
 }
