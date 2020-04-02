@@ -38,7 +38,7 @@ class CommentPreparer extends XFCP_CommentPreparer
         $message = \XF::phrase($phraseName, [
             'reason' => $reportReason->reason,
             'message' => $originalMessage
-        ])->render('html');
+        ], true)->render('raw');
 
         $this->setMessage($message);
     }
