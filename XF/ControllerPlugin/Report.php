@@ -6,6 +6,7 @@ use TickTackk\ReportReasons\ControllerPlugin\ReportReason as ReportReasonControl
 use TickTackk\ReportReasons\Entity\ReportReason as ReportReasonEntity;
 use TickTackk\ReportReasons\Repository\ReportReason as ReportReasonRepo;
 use XF\ControllerPlugin\AbstractPlugin as AbstractControllerPlugin;
+use XF\ControllerPlugin\EditorPlugin;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Repository;
 use XF\Mvc\Reply\Exception;
@@ -74,6 +75,13 @@ class Report extends XFCP_Report
         /** @var ExtendedReportCreatorSvc $reportCreatorSvc */
 
         $originalMessage = $this->filter('message', 'str');
+        if (\XF::isAddOnActive('SV/ReportImprovements', 1707524143) && (\XF::options()->svRichTextReport ?? false))
+        {
+            /** @var EditorPlugin $editorPlugin */
+            $editorPlugin = $this->plugin('XF:Editor');
+            $originalMessage = $editorPlugin->fromInput('message');
+        }
+
         if ($originalMessage === '' && $reportReason->reason_id)
         {
             $this->request()->set('message', \XF::generateRandomString(10));
