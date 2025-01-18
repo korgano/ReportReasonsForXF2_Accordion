@@ -1,6 +1,10 @@
 CHANGELOG
 ==========================
 
+## 1.1.3 (`1010370`)
+
+- **Fix:** Incompatibility with creating report comments when Report Improvements rich editor is enabled (#20)
+
 ## 1.1.2 (`1010270`)
 
 - **Fix:** More information input value not being escaped properly (#17)
